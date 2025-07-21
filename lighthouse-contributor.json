@@ -2,35 +2,43 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "mspOfferName": {
+    "managedByTenantId": {
       "type": "string",
-      "defaultValue": "DIM-IT - Admin Access"
+      "metadata": {
+        "description": "The Azure Active Directory tenant ID of the managing (MSP) tenant."
+      }
     },
-    "mspTenantId": {
-      "type": "string",
-      "defaultValue": "8d10cca9-6850-45df-9d79-f00ed40d08f2"
+    "authorizations": {
+      "type": "array",
+      "metadata": {
+        "description": "An array of objects defining delegated permissions. Each object requires: principalId, principalIdDisplayName, roleDefinitionId."
+      }
     },
-    "mspGroupId": {
+    "registrationDefinitionName": {
       "type": "string",
-      "defaultValue": "85157ad2-6c7c-410a-82e9-99be3965750b"
+      "defaultValue": "DIM-IT - ARM Access",
+      "metadata": {
+        "description": "The name of the registration definition."
+      }
+    },
+    "registrationDefinitionDescription": {
+      "type": "string",
+      "defaultValue": "Provides access to DIM-IT team.",
+      "metadata": {
+        "description": "Description for the registration definition."
+      }
     }
   },
   "resources": [
     {
       "type": "Microsoft.ManagedServices/registrationDefinitions",
       "apiVersion": "2022-10-01",
-      "name": "[guid(parameters('mspOfferName'), parameters('mspTenantId'))]",
+      "name": "[guid(parameters('registrationDefinitionName'), parameters('managedByTenantId'))]",
       "properties": {
-        "description": "Provides Contributor access to MSP team.",
-        "authorizations": [
-          {
-            "principalId": "[parameters('mspGroupId')]",
-            "roleDefinitionId": "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",
-            "principalIdDisplayName": "MSP Admin Group"
-          }
-        ],
-        "managedByTenantId": "[parameters('mspTenantId')]",
-        "registrationDefinitionName": "[parameters('mspOfferName')]"
+        "description": "[parameters('registrationDefinitionDescription')]",
+        "authorizations": "[parameters('authorizations')]",
+        "managedByTenantId": "[parameters('managedByTenantId')]",
+        "registrationDefinitionName": "[parameters('registrationDefinitionName')]"
       }
     }
   ]
