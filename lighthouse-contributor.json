@@ -1,0 +1,37 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "mspOfferName": {
+      "type": "string",
+      "defaultValue": "DIM-IT - Admin Access"
+    },
+    "mspTenantId": {
+      "type": "string",
+      "defaultValue": "8d10cca9-6850-45df-9d79-f00ed40d08f2"
+    },
+    "mspGroupId": {
+      "type": "string",
+      "defaultValue": "85157ad2-6c7c-410a-82e9-99be3965750b"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.ManagedServices/registrationDefinitions",
+      "apiVersion": "2022-10-01",
+      "name": "[guid(parameters('mspOfferName'), parameters('mspTenantId'))]",
+      "properties": {
+        "description": "Provides Contributor access to MSP team.",
+        "authorizations": [
+          {
+            "principalId": "[parameters('mspGroupId')]",
+            "roleDefinitionId": "/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c",  // Contributor
+            "principalIdDisplayName": "MSP Admin Group"
+          }
+        ],
+        "managedByTenantId": "[parameters('mspTenantId')]",
+        "registrationDefinitionName": "[parameters('mspOfferName')]"
+      }
+    }
+  ]
+}
